@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input
+      type="file"
+      name=""
+      id="input-file"
+      webkitdirectory
+      directory
+      multiple  
+    />
+
+    <button id="send">CLICK SEND</button>
+  </body>
+  <script>
+    const inputFile = document.querySelector("#input-file");
+    var filenames = [];
+    var ficheros = null;
+    
+    inputFile.addEventListener("change", (e) => {
+      e.preventDefault();
+      ficheros = e.target.files;
+      for (const iterator of e.target.files) {
+        console.log(iterator.webkitRelativePath);
+        filenames.push(iterator.webkitRelativePath);
+      }
+    });
+
+    const sendFiles = document.querySelector("#send");
+
+    sendFiles.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const formdata = new FormData();
+      
+      filenames.forEach((filename, index) => {
+        formdata.append("files",ficheros[index],filename)
+      })
+      
+      const requestOptions = {
+        method: "POST",
+        body: formdata
+      }
+
+      fetch("http://localhost:8000/upload", requestOptions)
+      .then(res => res.json())
+      .then(result =>  console.log(result))
+      .catch(err => console.log(err))
+    });
+  </script>
+</html>
